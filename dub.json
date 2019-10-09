@@ -1,0 +1,13 @@
+{
+	"authors": [
+		"jonas"
+	],
+	"copyright": "Copyright © 2019, jonas",
+	"dependencies": {
+		"vibe-d": "~>0.8.6"
+	},
+	"description": "A simple vibe.d server application.",
+	"license": "proprietary",
+	"name": "tron",
+	"versions": ["VibeDefaultMain"]
+}

@@ -1,0 +1,15 @@
+.dub
+docs.json
+__dummy.html
+docs/
+/tron
+tron.so
+tron.dylib
+tron.dll
+tron.a
+tron.lib
+tron-test-*
+*.exe
+*.o
+*.obj
+*.lst

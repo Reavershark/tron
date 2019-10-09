@@ -1,0 +1,12 @@
+doctype html
+html
+  head
+    title Tron game
+    script(type='text/javascript', src='/scripts/main.js')
+    style.
+      pre#log {
+      border: 1px solid black;
+      }
+  body(onload='connect()')
+    canvas(id='canvas', width='200', height='100')
+    pre#log.
