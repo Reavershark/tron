@@ -3,10 +3,10 @@ html
   head
     title Tron game
     script(type='text/javascript', src='/scripts/main.js')
-    style.
-      pre#log {
-      border: 1px solid black;
-      }
+    link(rel="stylesheet", href="styles/common.css")
   body(onload="connect()")
-    canvas#canvas(width='200', height='100')
-    pre#log.
+    div.container
+      div.lContainer
+        canvas#game(width='96', height='64')
+      div.rContainer
+        pre#log

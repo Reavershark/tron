@@ -1,0 +1,33 @@
+pre#log {
+    border: 1px solid black;
+}
+
+canvas#game {
+    border: 1px solid black;
+    width: 100%;
+    image-rendering: -moz-crisp-edges;
+    image-rendering: -webkit-crisp-edges;
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
+}
+
+.container {
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+.lContainer {
+    position: relative;
+    width: 30%;
+    height: 30%;
+    float: left;
+}
+
+.rContainer {
+    position: relative;
+    width: 30vw;
+    height: 30vh;
+    float: right;
+}

@@ -13,6 +13,7 @@ import core.time;
 import std.conv : to;
 
 import std.array;
+import std.uuid;
 
 import types;
 import game;
@@ -24,6 +25,7 @@ struct UserSettings {
 class WebsocketService {
     private {
         SessionVar!(UserSettings, "settings") m_userSettings;
+        TronGame[UUID] games;
     }
 
     @path("/") void getHome()
@@ -32,29 +34,40 @@ class WebsocketService {
     }
 
     @path("/ws") void getWebsocket(scope WebSocket socket){
-        logInfo("Got new web socket connection.");
+        TronGame game;
+        int id;
 
-        TronGame game = new TronGame();
-        int id = 0;
-
-        while (socket.connected) {
-            do {
-                sleep(1000.msecs);
-                if (!socket.connected) break;
-
-                if (socket.dataAvailableForRead)
-                {
-                    auto message = socket.receiveText.split;
-                    logInfo("Reveived message: %s", message);
-
-                    if (message[0] == "direction")
-                        game.setDirection(id, message[1]);
-                }
-
-                //string message = "p1 20 50";
-                socket.send("grid\n" ~ game.getGrid());
-            } while (game.tick());
+        if (games.length == 0)
+        {
+            game = new TronGame;
+            games[randomUUID()] = game;
+            id = 0;
         }
+        else
+        {
+            foreach(g; games)
+                game = g;
+            id = 1;
+        }
+
+        logInfo("Got new web socket connection.");
+        logInfo("Player: %d", id);
+
+        do {
+            sleep(250.msecs);
+
+            if (socket.dataAvailableForRead)
+            {
+                auto message = socket.receiveText.split;
+                logInfo("Reveived message: %s", message);
+
+                if (message[0] == "turn")
+                    game.setDirection(id, message[1]);
+            }
+
+            socket.send("grid\n" ~ game.getGrid());
+        } while (socket.connected && game.tick());
+
         logInfo("Client disconnected.");
     }
 }

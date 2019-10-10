@@ -1,4 +1,4 @@
-﻿/*
+/*
  * Websocket
  */
 let socket
@@ -6,22 +6,18 @@ let socket
 function connect()
 {
 	log("connecting...");
-	socket = new WebSocket(getBaseURL() + "/ws");
-	socket.onopen = function() {
-		log("connected. waiting for timer...");
-	}
-	socket.onmessage = function(message) {	
-        let data = message.split("\n");
-        if data[0] == "grid";
-        draw(data.slice(1));
-	}
+    socket = new WebSocket(getBaseURL() + "/ws");
 
-	socket.onclose = function() {
-		log("Connection closed.");
-	}
-	socket.onerror = function() {
-		log("Websocket error!");
-	}
+	socket.onmessage = handleMessage;
+	socket.onopen = () => {	log("connected. waiting for timer...");	}
+	socket.onclose = () => { log("Connection closed."); }
+	socket.onerror = () => { log("Websocket error!"); }
+}
+
+function handleMessage(message) {
+    let data = message.data.split("\n");
+    if (data[0] == "grid");
+        draw(data.slice(1));
 }
 
 function getBaseURL()
@@ -56,27 +52,34 @@ document.onkeydown = function(evt) {
             key = "unknown";
     }
     if (key != "unknown") {
-        socket.send(key);
+        socket.send("turn\n" + key);
         log("Key pressed: " + key);
     }
 };
+
 
 /*
  * Draw
  */ 
 
+let rgbaBlack = "rgba(0,0,0,255)";
+let rgbaWhite = "rgba(255,255,255,0)";
+
 function draw(grid) {
-    let canvas = document.getElementById("canvas");
+    let drawContext = document.getElementById("game").getContext('2d');
+    drawContext.imageSmoothingEnabled = false;
 
-    var id = canvas.createImageData(1,1);
-    var d  = id.data;
-    d[0]   = 0;
-    d[1]   = 0;
-    d[2]   = 0;
-    d[3]   = 100;
-    canvas.putImageData(id, 5, 5 );    
+    grid.forEach( (line, y) => {
+        [...line].forEach( (c, x) => {
+            if(c == '1')
+            {
+                drawContext.fillStyle = rgbaBlack;
+                drawContext.fillRect(x, y, 1, 1);
+            }
+        });
+    });
+
 }
-
 
 /*
  * Log

@@ -80,10 +80,11 @@ class TronGame : ITronGame
         drawPlayersToGrid();
 
         // False on game end
-        bool continueGame = false;
+        int alivePlayers = 0;
         foreach(player; players)
-            continueGame = continueGame || player.isAlive;
-        return continueGame;
+            if (player.isAlive)
+                alivePlayers++;
+        return alivePlayers >= 2;
     }
 
     void drawPlayersToGrid()
