@@ -7,7 +7,7 @@ interface ITronGame
     void restart();
     bool tick();
     void setDirection(int playerId, string direction);
-    bool[Vector2] getGrid();
+    string getGrid();
 }
 
 struct Player
@@ -117,8 +117,21 @@ class TronGame : ITronGame
 
     // Getters
 
-    public bool[Vector2] getGrid()
+    public string getGrid()
     {
-        return grid;
+        string s;
+        foreach(y; 0..dimensions.y)
+        {
+            foreach(x; 0..dimensions.x)
+            {
+                auto coord = Vector2(x, y);
+                if (coord in grid && grid[coord]) // Throws range violation if not in grid
+                    s ~= "1";
+                else
+                    s ~= "0";
+            }
+            s ~= "\n";
+        }
+        return s;
     }
 }

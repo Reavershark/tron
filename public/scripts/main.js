@@ -11,7 +11,9 @@ function connect()
 		log("connected. waiting for timer...");
 	}
 	socket.onmessage = function(message) {	
-		log("Server: " + message.data);
+        let data = message.split("\n");
+        if data[0] == "grid";
+        draw(data.slice(1));
 	}
 
 	socket.onclose = function() {
@@ -58,6 +60,22 @@ document.onkeydown = function(evt) {
         log("Key pressed: " + key);
     }
 };
+
+/*
+ * Draw
+ */ 
+
+function draw(grid) {
+    let canvas = document.getElementById("canvas");
+
+    var id = canvas.createImageData(1,1);
+    var d  = id.data;
+    d[0]   = 0;
+    d[1]   = 0;
+    d[2]   = 0;
+    d[3]   = 100;
+    canvas.putImageData(id, 5, 5 );    
+}
 
 
 /*

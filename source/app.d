@@ -52,7 +52,7 @@ class WebsocketService {
                 }
 
                 //string message = "p1 20 50";
-                socket.send(to!string(game.getGrid()));
+                socket.send("grid\n" ~ game.getGrid());
             } while (game.tick());
         }
         logInfo("Client disconnected.");

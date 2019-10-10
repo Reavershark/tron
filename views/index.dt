@@ -7,6 +7,6 @@ html
       pre#log {
       border: 1px solid black;
       }
-  body(onload='connect()')
-    canvas(id='canvas', width='200', height='100')
+  body(onload="connect()")
+    canvas#canvas(width='200', height='100')
     pre#log.
