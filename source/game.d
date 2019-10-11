@@ -96,24 +96,18 @@ class TronGame : ITronGame
     // Input
     public void setDirection(int playerId, string direction)
     {
+        Player* player = &players[playerId];
         if (players[playerId].isAlive)
-            switch(direction)
-            {
-                default:
-                    break;
-                case "left":
-                    players[playerId].direction = Vector2(-1, 0);
-                    break;
-                case "up":
-                    players[playerId].direction = Vector2(0, -1);
-                    break;
-                case "right":
-                    players[playerId].direction = Vector2(1, 0);
-                    break;
-                case "down":
-                    players[playerId].direction = Vector2(0, 1);
-                    break;
-            }
+        {
+            if (direction == "left" && player.direction != Vector2(1, 0))
+                player.direction = Vector2(-1, 0);
+            else if (direction == "up" && player.direction != Vector2(0, 1))
+                player.direction = Vector2(0, -1);
+            else if (direction == "right" && player.direction != Vector2(-1, 0))
+                player.direction = Vector2(1, 0);
+            else if (direction == "down" && player.direction != Vector2(0, -1))
+                player.direction = Vector2(0, 1);
+        }
     }
 
     // Getters
