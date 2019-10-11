@@ -3,10 +3,18 @@ html
   head
     title Tron game
     script(type='text/javascript', src='/scripts/main.js')
+    link(rel="stylesheet", href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.5/css/bulma.min.css")
     link(rel="stylesheet", href="styles/common.css")
   body(onload="connect()")
     div.container
-      div.lContainer
-        canvas#game(width='96', height='64')
-      div.rContainer
+      p.title.has-text-centered.is-2#maintitle Tron game
+      div.tile.is-ancestor
+        div.tile.is-parent
+          div.tile.is-child.box
+            canvas#game(width='96', height='64')
+        div.tile.is-parent
+          div.tile.is-child.box
+            p Lobby
+      div.box
+        p.title Log
         pre#log

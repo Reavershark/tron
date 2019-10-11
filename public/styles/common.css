@@ -1,5 +1,7 @@
-pre#log {
+.tile > .box > *, pre#log {
     border: 1px solid black;
+    overflow-y: scroll;
+    height: 50vh;
 }
 
 canvas#game {
@@ -12,22 +14,11 @@ canvas#game {
 }
 
 .container {
+    width: 80vw;
     margin-left: auto;
     margin-right: auto;
-    padding-left: 15px;
-    padding-right: 15px;
 }
 
-.lContainer {
-    position: relative;
-    width: 30%;
-    height: 30%;
-    float: left;
-}
-
-.rContainer {
-    position: relative;
-    width: 30vw;
-    height: 30vh;
-    float: right;
+#maintitle {
+    margin: 5vh;
 }

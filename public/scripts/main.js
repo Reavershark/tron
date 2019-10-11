@@ -86,5 +86,6 @@ function draw(grid) {
  */
 function log(text)
 {
-    document.getElementById("log").innerHTML += text + '<br/>';
+    let e = document.getElementById("log")
+    e.innerHTML = '<p>' + text + '<p/>' + e.innerHTML;
 }
