@@ -1,3 +1,23 @@
+function init()
+{
+    //finishCSS();
+    connect();
+}
+
+
+/*
+ * CSS
+ */
+
+//function finishCSS()
+//{
+//    [...document.getElementsByClassName("rect")].forEach((rect) => {
+//        let newHeight = rect.offsetWidth / (3/2);
+//        rect.style.height = newHeight + "px";
+//        rect.style.maxHeight = newHeight + "px";
+//    }); 
+//}
+
 /*
  * Websocket
  */

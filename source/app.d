@@ -25,12 +25,12 @@ struct UserSettings {
 class WebsocketService {
     private {
         SessionVar!(UserSettings, "settings") m_userSettings;
-        TronGame[UUID] games;
     }
+    TronGame[UUID] games;
 
     @path("/") void getHome()
     {
-        render!("index.dt");
+        render!("index.dt", games);
     }
 
     @path("/ws") void getWebsocket(scope WebSocket socket){

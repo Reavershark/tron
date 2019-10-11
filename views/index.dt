@@ -5,16 +5,21 @@ html
     script(type='text/javascript', src='/scripts/main.js')
     link(rel="stylesheet", href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.5/css/bulma.min.css")
     link(rel="stylesheet", href="styles/common.css")
-  body(onload="connect()")
+  body(onload="init()")
     div.container
       p.title.has-text-centered.is-2#maintitle Tron game
-      div.tile.is-ancestor
-        div.tile.is-parent
-          div.tile.is-child.box
+      div.columns
+        div.column
+          div.box
             canvas#game(width='96', height='64')
-        div.tile.is-parent
-          div.tile.is-child.box
-            p Lobby
+        div.column.expand
+          div.box
+            nav.panel
+              p.panel-heading Lobby browser
+              - foreach(uuid, game; games)
+                a.panel-block #{game}: #{uuid} 
+              div.panel-block
+                button.button.is-info.is-fullwidth(onclick="location.reload()") refresh
       div.box
         p.title Log
         pre#log

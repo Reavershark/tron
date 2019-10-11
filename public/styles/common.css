@@ -1,11 +1,8 @@
-.tile > .box > *, pre#log {
-    border: 1px solid black;
-    overflow-y: scroll;
-    height: 50vh;
+.title#maintitle {
+    margin: 3vh;
 }
 
 canvas#game {
-    border: 1px solid black;
     width: 100%;
     image-rendering: -moz-crisp-edges;
     image-rendering: -webkit-crisp-edges;
@@ -13,12 +10,12 @@ canvas#game {
     image-rendering: crisp-edges;
 }
 
-.container {
-    width: 80vw;
-    margin-left: auto;
-    margin-right: auto;
+pre#log {
+    border: 1px solid black;
+    overflow-y: scroll;
+    height: 30vh;
 }
 
-#maintitle {
-    margin: 5vh;
+.expand {
+    display: grid;
 }
