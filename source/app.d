@@ -8,6 +8,7 @@ import vibe.http.router : URLRouter;
 import vibe.http.server;
 import vibe.web.web;
 import vibe.http.websockets : WebSocket, handleWebSockets;
+import vibe.core.core : runTask;
 
 import core.time;
 import std.conv : to;
@@ -18,57 +19,81 @@ import std.uuid;
 import types;
 import game;
 
-struct UserSettings {
+__gshared TronGame[UUID] games;
+
+struct UserSettings
+{
     string userName;
+    UUID lastRoom;
 }
 
-class WebsocketService {
-    private {
+class WebsocketService
+{
+    private
+    {
         SessionVar!(UserSettings, "settings") m_userSettings;
     }
-    TronGame[UUID] games;
 
     @path("/") void getHome()
     {
         render!("index.dt", games);
     }
 
-    @path("/ws") void getWebsocket(scope WebSocket socket){
-        TronGame game;
-        int id;
+    @path("/ws") void getWebsocket(scope WebSocket socket)
+    {
+        UUID gameUUID;
+        int playerId;
 
         if (games.length == 0)
         {
-            game = new TronGame;
-            games[randomUUID()] = game;
-            id = 0;
+            gameUUID = randomUUID();
+            games[gameUUID] = new TronGame;
+            playerId = 0;
         }
         else
         {
-            foreach(g; games)
-                game = g;
-            id = 1;
+            foreach (uuid; games.byKey)
+                gameUUID = uuid;
+            playerId = 1;
         }
 
         logInfo("Got new web socket connection.");
-        logInfo("Player: %d", id);
+        logInfo("Player: %d", playerId);
 
-        do {
-            sleep(250.msecs);
-
+        while (socket.connected)
+        {
+            TronGame game = games[gameUUID];
             if (socket.dataAvailableForRead)
             {
                 auto message = socket.receiveText.split;
                 logInfo("Reveived message: %s", message);
 
                 if (message[0] == "turn")
-                    game.setDirection(id, message[1]);
+                    game.setDirection(playerId, message[1]);
             }
-
             socket.send("grid\n" ~ game.getGrid());
-        } while (socket.connected && game.tick());
+
+            sleep(250.msecs);
+        }
 
         logInfo("Client disconnected.");
+    }
+}
+
+void gameLoop()
+{
+    while (true)
+    {
+        foreach (uuid, game; games)
+        {
+            if (!game.tick())
+            {
+                // Game end
+                game.restart();
+                //games.remove(uuid);
+            }
+        }
+        sleep(1000.msecs);
     }
 }
 
@@ -84,6 +109,8 @@ shared static this()
     settings.port = 8080;
     settings.bindAddresses = ["::1", "127.0.0.1"];
     listenHTTP(settings, router);
+
+    runTask(&gameLoop);
 
     logInfo("Please open http://127.0.0.1:8080/ in your browser.");
 }

@@ -48,6 +48,7 @@ class TronGame : ITronGame
 
     void resetGrid()
     {
+        grid = null;
         players = null;
         foreach(i; 0..playerCount)
             players ~= Player(defaultPositions[i], defaultDirections[i]);
