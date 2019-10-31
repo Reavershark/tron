@@ -20,15 +20,15 @@ function log(text) {
 /* Websocket */
 let socket
 
-
 function connect(uuid) {
-    log("connecting...");
+    if (socket)
+        socket.close();
     socket = new WebSocket(getBaseURL() + "/ws" + "?uuid=" + uuid);
 
     socket.onmessage = handleMessage;
-    socket.onopen = () => { log("connected. waiting for timer..."); }
-    socket.onclose = () => { log("Connection closed."); location.reload(); }
-    socket.onerror = () => { log("Websocket error!"); }
+    socket.onopen = () => { log(uuid + ": Connected"); }
+    socket.onclose = () => { log(uuid + ": Connection closed"); }
+    socket.onerror = () => { log(uuid + ": Websocket error"); }
 }
 
 function handleMessage(message) {
