@@ -2,6 +2,7 @@ module app;
 
 import vibe.core.core : sleep;
 
+import std.exception : enforce;
 import vibe.core.log;
 import vibe.http.fileserver : serveStaticFiles;
 import vibe.http.router : URLRouter;
@@ -25,40 +26,48 @@ struct UserSettings
 {
     string userName;
     UUID lastRoom;
+    UUID playerUUID = UUID.init;
 }
 
 class WebsocketService
 {
-    private
-    {
-        SessionVar!(UserSettings, "settings") m_userSettings;
-    }
+    private SessionVar!(UserSettings, "settings") m_userSettings;
 
     @path("/") void getHome()
     {
         render!("index.dt", games);
     }
 
+    @path("/create") void getCreate(scope HTTPServerResponse res)
+    {
+        UUID uuid = randomUUID();
+        games[uuid] = new TronGame;
+        res.writeVoidBody();
+    }
+
     @path("/ws") void getWebsocket(scope WebSocket socket)
     {
-        UUID gameUUID;
-        int playerId;
+        auto request = cast(HTTPServerRequest) socket.request;
 
-        if (games.length == 0)
+        if (m_userSettings.playerUUID == UUID.init) // Register user session
         {
-            gameUUID = randomUUID();
-            games[gameUUID] = new TronGame;
-            playerId = 0;
+            UserSettings s;
+            s.playerUUID = randomUUID();
+            m_userSettings = s;
         }
+
+        UUID gameUUID = request.query["uuid"];
+        UUID playerUUID = m_userSettings.playerUUID;
+
+        enforce(gameUUID in games, "Game has ended");
+
+        if (games[gameUUID].addPlayer(playerUUID))
+            logInfo("Player %s joined game %s", playerUUID, gameUUID);
         else
         {
-            foreach (uuid; games.byKey)
-                gameUUID = uuid;
-            playerId = 1;
+            logInfo("Player %s tried to join full game %s", playerUUID, gameUUID);
+            enforce(false, "Game is full");
         }
-
-        logInfo("Got new web socket connection.");
-        logInfo("Player: %d", playerId);
 
         while (socket.connected)
         {
@@ -69,11 +78,11 @@ class WebsocketService
                 logInfo("Reveived message: %s", message);
 
                 if (message[0] == "turn")
-                    game.setDirection(playerId, message[1]);
+                    game.setDirection(playerUUID, message[1]);
             }
             socket.send("grid\n" ~ game.getGrid());
 
-            sleep(250.msecs);
+            sleep(75.msecs);
         }
 
         logInfo("Client disconnected.");
@@ -90,10 +99,9 @@ void gameLoop()
             {
                 // Game end
                 game.restart();
-                //games.remove(uuid);
             }
         }
-        sleep(1000.msecs);
+        sleep(150.msecs);
     }
 }
 
@@ -108,6 +116,7 @@ shared static this()
     auto settings = new HTTPServerSettings;
     settings.port = 8080;
     settings.bindAddresses = ["::1", "127.0.0.1"];
+    settings.sessionStore = new MemorySessionStore;
     listenHTTP(settings, router);
 
     runTask(&gameLoop);

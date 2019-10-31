@@ -2,7 +2,7 @@ doctype html
 html
   head
     title Tron game
-    script(type='text/javascript', src='/scripts/main.js')
+    script(type="text/javascript", src="/scripts/main.js")
     link(rel="stylesheet", href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.5/css/bulma.min.css")
     link(rel="stylesheet", href="styles/common.css")
   body(onload="init()")
@@ -11,15 +11,16 @@ html
       div.columns
         div.column
           div.box
-            canvas#game(width='96', height='64')
+            canvas#game(width="96", height="64")
         div.column.expand
           div.box
             nav.panel
               p.panel-heading Lobby browser
               - foreach(uuid, game; games)
-                a.panel-block #{game}: #{uuid} 
+                a.panel-block(onclick="connect('#{uuid}')") #{game}: #{uuid} 
               div.panel-block
                 button.button.is-info.is-fullwidth(onclick="location.reload()") refresh
+                button.button.is-info.is-fullwidth(onclick="newGame()") create
       div.box
         p.title Log
         pre#log

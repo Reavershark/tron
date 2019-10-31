@@ -19,3 +19,8 @@ pre#log {
 .expand {
     display: grid;
 }
+
+.panel-block > .button {
+    margin-left: 6px;
+    margin-right: 6px;
+}
