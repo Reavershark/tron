@@ -22,20 +22,17 @@ import game;
 
 __gshared TronGame[UUID] games;
 
-struct UserSettings
-{
-    string userName;
-    UUID lastRoom;
-    UUID playerUUID = UUID.init;
-}
-
 class WebsocketService
 {
-    private SessionVar!(UserSettings, "settings") m_userSettings;
+    private SessionVar!(UUID, "playerUUID") playerUUID;
 
     @path("/") void getHome()
     {
-        render!("index.dt", games);
+        if (playerUUID.value == UUID.init)
+            playerUUID = randomUUID();
+        logInfo("Player %s requested /", playerUUID);
+        string uuid = playerUUID.value.toString();
+        render!("index.dt", uuid, games);
     }
 
     @path("/create") void getCreate(scope HTTPServerResponse res)
@@ -49,15 +46,7 @@ class WebsocketService
     {
         auto request = cast(HTTPServerRequest) socket.request;
 
-        if (m_userSettings.playerUUID == UUID.init) // Register user session
-        {
-            UserSettings s;
-            s.playerUUID = randomUUID();
-            m_userSettings = s;
-        }
-
         UUID gameUUID = request.query["uuid"];
-        UUID playerUUID = m_userSettings.playerUUID;
 
         enforce(gameUUID in games, "Game has ended");
 
@@ -82,9 +71,10 @@ class WebsocketService
             }
             socket.send("grid\n" ~ game.getGrid());
 
-            sleep(75.msecs);
+            sleep(30.msecs);
         }
 
+        //games[gameUUID].removePlayer(playerUUID);
         logInfo("Client disconnected.");
     }
 }
@@ -101,7 +91,7 @@ void gameLoop()
                 game.restart();
             }
         }
-        sleep(150.msecs);
+        sleep(60.msecs);
     }
 }
 

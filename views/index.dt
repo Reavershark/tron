@@ -6,6 +6,10 @@ html
     link(rel="stylesheet", href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.5/css/bulma.min.css")
     link(rel="stylesheet", href="styles/common.css")
   body(onload="init()")
+    nav.navbar(role="navigation", aria-label="main navigation")
+      div.navbar-end
+        div.navbar-item
+          strong Welcome #{uuid}
     div.container
       p.title.has-text-centered.is-2#maintitle Tron game
       div.columns
